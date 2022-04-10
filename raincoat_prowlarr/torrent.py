@@ -116,3 +116,27 @@ def local(torrent, download_dir, logger):
         print(f"Unable to send to {TOR_CLIENT}. Check the logs for more information.")
         logger.error(f"Error sending to {TOR_CLIENT}. {str(e)}")
         exit()
+
+
+def nzbget(torrent, NZBGET_URL, NZBGET_USER, NZBGET_PW, NZBGET_PORT,logger):
+    TOR_CLIENT = "nzbget"
+    print(f"Sending {torrent.description} to {TOR_CLIENT}")
+    url = torrent.download
+    #print(url)
+    try:
+        logger.debug("Connecting to nzbget client...")
+        # Connection
+        logger.debug(f"{TOR_CLIENT} connection info: {NZBGET_URL}, {NZBGET_USER}")
+                                       
+        # Add torrent
+        logger.debug(f"Adding {torrent.description} with url: {url}")
+        cmd = 'nzbget -n -o ControlIP='+ str(NZBGET_URL) + ' -o ControlUsername=' + str(NZBGET_USER) + ' -o ControlPassword=' + str(NZBGET_PW)+ ' -o ControlPort=' + str(NZBGET_PORT) + ' -A T N ' + "\"" + str(torrent.description) + "\" \"" + url +"\""
+        #print(cmd)
+        logger.debug(f"Running {cmd}")
+        res = subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell = True)
+        #print(res.stdout.decode("utf8"))
+        print("Torrent sent!")
+    except Exception as e:
+        print(f"Unable to send to {TOR_CLIENT}. Check the logs for more information.")
+        logger.error(f"Error sending to {TOR_CLIENT}. {str(e)}")
+        exit()
