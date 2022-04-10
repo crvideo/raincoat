@@ -88,8 +88,8 @@ logger.debug(f"{shared.APP_NAME} v{shared.VERSION}")
 greet(shared.VERSION)
 
 def set_overrides():
-    if args.key is not None:
-        shared.APIKEY = args.key       
+    if args.jackett_key is not None:
+        shared.JACKETT_APIKEY = args.jackett_key       
 
     if args.length is not None:        
         shared.DESC_LENGTH = args.length
@@ -97,12 +97,12 @@ def set_overrides():
     if args.limit is not None:        
         shared.RESULTS_LIMIT = args.limit
 
-    if args.indexer is not None:        
-        shared.JACKETT_INDEXER = args.indexer
+    if args.jackett_indexer is not None:        
+        shared.JACKETT_INDEXER = args.jackett_indexer
 
     # Set default sorting
-    if args.sort is None:
-        args.sort = "seeders"
+    if args.sort is not None:
+        shared.SORT = "cn,size"
 
     if args.local:
         shared.TOR_CLIENT = "local"
@@ -116,6 +116,16 @@ def set_overrides():
     if args.insecure:
         requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
         shared.VERIFY = False
+
+    if args.indexer_manager is not None:
+        shared.INDEXER_MANAGER = args.indexer_manager       
+
+    if args.prowlarr_key is not None:
+        shared.PROWLARR_APIKEY = args.prowlarr_key
+
+    if args.prowlarr_indexer is not None:        
+        shared.PROWLARR_INDEXER = args.prowlarr_indexer
+
 
     if args.list:        
         if os.path.exists(args.list):
