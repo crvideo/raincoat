@@ -177,24 +177,45 @@ def prompt_torrent():
         prompt_torrent()
     search(cmd)
 
+
+################################################################################
+################################################################################
+###			download function
+################################################################################
+################################################################################
+
 def download(id):
     torrent = get_torrent_by_id(shared.TORRENTS, id)
-    if torrent is None:
-        print(f"Cannot find {id}.")
-        logger.warning(f"Invalid id. The ID provided was not found in the list.")
-        search(args.search)    
-    else:    
-        if shared.TOR_CLIENT.lower() == "transmission":
-            transmission(torrent, shared.CLIENT_URL, shared.TOR_CLIENT_USER, shared.TOR_CLIENT_PW, logger)
-        elif shared.TOR_CLIENT.lower() == "deluge":
-            deluge(torrent, shared.CLIENT_URL, shared.TOR_CLIENT_USER, shared.TOR_CLIENT_PW, logger)
-        elif shared.TOR_CLIENT.lower() == "qbittorrent":
-            qbittorrent(torrent, shared.CLIENT_URL, shared.TOR_CLIENT_USER, shared.TOR_CLIENT_PW, logger)
-        elif shared.TOR_CLIENT.lower() == "local":
-            local(torrent, shared.DOWNLOAD_DIR, logger)            
+    if(torrent.protocol == "torrent"):
+        if torrent is None:
+            print(f"Cannot find {id}.")
+            logger.warning(f"Invalid id. The ID provided was not found in the list.")
+            search(args.search)    
+        else:    
+            if shared.TOR_CLIENT.lower() == "transmission":
+                transmission(torrent, shared.CLIENT_URL, shared.TOR_CLIENT_USER, shared.TOR_CLIENT_PW, logger)
+            elif shared.TOR_CLIENT.lower() == "deluge":
+                deluge(torrent, shared.CLIENT_URL, shared.TOR_CLIENT_USER, shared.TOR_CLIENT_PW, logger)
+            elif shared.TOR_CLIENT.lower() == "qbittorrent":
+                qbittorrent(torrent, shared.CLIENT_URL, shared.TOR_CLIENT_USER, shared.TOR_CLIENT_PW, logger)
+            elif shared.TOR_CLIENT.lower() == "local":
+                local(torrent, shared.DOWNLOAD_DIR, logger)            
+            else:
+                print(f"Unsupported torrent client. ({shared.TOR_CLIENT})")
+                exit()
+                
+    if(torrent.protocol == "usenet"):
+        if torrent is None:
+            print(f"Cannot find {id}.")
+            logger.warning(f"Invalid id. The ID provided was not found in the list.")
+            search(args.search)    
         else:
-            print(f"Unsupported torrent client. ({shared.TOR_CLIENT})")
-            exit()
+            if which("nzbget"):
+                nzbget(torrent, shared.NZBGET_URL, shared.NZBGET_USER, shared.NZBGET_PW, shared.NZBGET_PORT, logger)            
+            else:
+                print(f"nzbget not found.")
+                exit()
+
 
 def search(search_terms):
     print(f"Searching for \"{search_terms}\"...\n")
