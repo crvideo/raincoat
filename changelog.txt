@@ -1,20 +1,14 @@
-=== 1.2 ===
-- Added the option to specify a file to search terms from.
 
-=== 1.1 ===
-- Added the option to specify the number of entries to dowload automatically.
+=== 0.2.2 ===
+Update Readme
 
-=== 1.0 ===
-- Fixed a minor typo preventing from using indexer parameter in the command line.
 
-=== 0.9 ===
-- Added a --download option to grab top result automatically
-- Added an `insecure` feature to allow self-signed certificates.
-- Fixed some downloads not working properly depending on the url.
+=== 0.2.1 ===
+Update Readme and config
 
-=== 0.8 ===
-- Improved size display
-- Added a "Next Page" function
-- Added local download option
-- Improved error handling
-- Added "--verbose" switch for debugging
+=== 0.2.0 ===
+add support to searching jackett. Using --indexer_manager to invoke jackett or prowlarr
+
+
+=== 0.1.0 ===
+Based on raincoat-jackett, support searching prowlarr only
