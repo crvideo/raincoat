@@ -283,29 +283,27 @@ def search(search_terms):
             print(f"The request to Jackett failed. ({r.status_code})")
             logger.error(f"The request to Jackett failed. ({r.status_code}) :: {shared.JACKETT_URL}api?passkey={shared.APIKEY}&search={search_terms}")
             exit()
-        res = json.loads(r.content)
-        res_count = len(res['Results'])
+        res_count = len(res)
         logger.debug(f"Search yielded {str(res_count)} results.")
         if shared.VERBOSE_MODE:
-            logger.debug(f"Search request content: {r.content}")
+            logger.debug(f"Search request content: {r.text}")
     except Exception as e:
-        print(f"The request to Jackett failed.")
+        print(f"The request to Jackett failed.{str(e)}")
         logger.error(f"The request to Jackett failed. {str(e)}")
         exit()
     id = 1
 
-    for r in res['Results']:
-        if filter_out(r['Title'], shared.EXCLUDE):
+    for r in res:
+        if filter_out(r['title'], shared.EXCLUDE):
             continue
-        if len(r['Title']) > shared.DESC_LENGTH:
-            r['Title'] = r['Title'][0:shared.DESC_LENGTH]
-        download_url = r['MagnetUri'] if r['MagnetUri'] else r['Link']
-        shared.TORRENTS.append(torrent(id, r['Title'].encode(
-            'ascii', errors='ignore'), r['CategoryDesc'], r['Seeders'], r['Peers'], download_url, r['Size']))
-        id += 1    
-
-    # Sort torrents array
-    sort_torrents(shared.TORRENTS)
+        if len(r['title']) > shared.DESC_LENGTH:
+            r['title'] = r['title'][0:shared.DESC_LENGTH]
+        download_url = r['downloadUrl']
+        shared.TORRENTS.append(torrent(id, r['title'], "", r['seeders'], r['leechers'], download_url, r['size'],r['age'],r['protocol'],r['cn']))
+        id += 1
+    
+    #Sort torrents array
+    #sort_torrents(shared.TORRENTS)
 
     # Display results
     shared.CURRENT_PAGE = 1
