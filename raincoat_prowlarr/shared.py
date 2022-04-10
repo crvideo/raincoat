@@ -3,11 +3,11 @@ def init():
     global VERSION
     VERSION = "1.3"
     global APP_NAME
-    APP_NAME = "Raincoat"
+    APP_NAME = "raincoat_prowlarr"
     global TORRENTS
     TORRENTS = []
-    global APIKEY
-    APIKEY = ""
+    global JACKETT_APIKEY
+    JACKETT_APIKEY = ""
     global JACKETT_URL
     JACKETT_URL = ""
     global JACKETT_INDEXER
@@ -40,7 +40,26 @@ def init():
     VERIFY = True
     global TERM_FILE
     TERM_FILE = None
-
+    
+    global INDEX_MANAGER
+    INDEX_MANAGER = ""
+    global SORT
+    SORT = ""
+    global PROWLARR_APIKEY
+    PROWLARR_APIKEY = ""
+    global PROWLARR_URL
+    PROWLARR_URL = ""
+    global PROWLARR_INDEXER
+    PROWLARR_INDEXER = ""
+    global NZBGET_URL
+    CLIENT_URL = ""
+    global NZBGET_USER
+    TOR_CLIENT_USER = ""
+    global NZBGET_PW
+    TOR_CLIENT_PW = ""
+    global NZBGET_PORT
+    TOR_CLIENT_PW = ""
+    
 
 
 
