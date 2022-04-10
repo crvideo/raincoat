@@ -334,17 +334,23 @@ def display_results(page):
     print(f"\nShowing page {shared.CURRENT_PAGE} - ({count * shared.CURRENT_PAGE} of {len(shared.TORRENTS)} results), limit is set to {shared.RESULTS_LIMIT}")    
     prompt_torrent()
 
-def sort_torrents(torrents):
-    if args.sort == "seeders":
-        return torrents.sort(key=lambda x: x.seeders, reverse=True)
-    if args.sort == "leechers":
-        return torrents.sort(key=lambda x: x.leechers, reverse=True)        
-    if args.sort == "size":
-        return torrents.sort(key=lambda x: x.size, reverse=True)
-    if args.sort == "ratio":
-        return torrents.sort(key=lambda x: x.ratio, reverse=True)
-    if args.sort == "description":
-        return torrents.sort(key=lambda x: x.description, reverse=True)
+    
+################################################################################
+################################################################################
+###			new sort function
+################################################################################
+################################################################################
+
+    
+def sort_torrents(json_data):
+    sortkeys = shared.SORT.split(",")
+    print(sortkeys)
+    json_data = sorted(json_data,key =operator.itemgetter(*sortkeys),reverse=True)
+    #print(json_data)
+    return json_data
+
+
+
 
 def main():
     set_overrides()
