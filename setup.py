@@ -14,13 +14,9 @@ class PostInstallCommand(install):
         if not os.path.exists(cfg_path):            
             cfg = open(cfg_path, 'x')
             j = dict(
-                indexer_manager="jackett",
                 jackett_apikey="",
                 jackett_url="http://127.0.0.1:9117",
                 jackett_indexer="all",
-                prowlarr_apikey="",
-                prowlarr_url="http://127.0.0.1:9117",
-                prowlarr_indexer="",
                 description_length=100,
                 exclude="",
                 results_limit=20,
@@ -30,6 +26,11 @@ class PostInstallCommand(install):
                 torrent_client_username="",
                 torrent_client_password="",
                 download_dir="",
+                indexer_manager="jackett",
+                prowlarr_apikey="",
+                prowlarr_url="http://127.0.0.1:9117",
+                prowlarr_indexer="",
+                sort= "",
                 nzbget_url= "http://127.0.0.1",
                 nzbget_username= "",
                 nzbget_password= "",
