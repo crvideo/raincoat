@@ -247,6 +247,35 @@ def search(search_terms):
                 if re.search(search_terms, item["title"]):
                     res.append(item)
 
+        elif shared.INDEXER_MANAGER == "prowlarr":
+            headers = {"Accept": "application/json",
+                       "Content-Type": "application/json",
+                       "X-Api-Key": shared.PROWLARR_APIKEY}
+            url = f"{shared.PROWLARR_URL}/api/v1/search?query=" + urllib.parse.quote(search_terms)
+            if shared.PROWLARR_INDEXER:
+                url = url + "&indexerIds=" + shared.PROWLARR_INDEXER
+            print(url)
+            r = requests.get(url, verify=shared.VERIFY,headers = headers)
+            json_data = json.loads(r.text)
+
+            ## title must contain search_terms and add cn label
+            res = []
+            for item in json_data:
+                if re.search("中文", item["title"]):
+                    item['cn'] = 1
+                else:
+                    item['cn'] = 0
+
+                if item['protocol'] == 'usenet':
+                    item['seeders'] = 0
+                    item['leechers'] = 0
+                res.append(item)
+                if re.search(search_terms, item["title"]):
+                    res.append(item)
+        else:
+            print(f"wrong indexer_manager, must be jackett/prowlarr:  {indexer_manager}")
+                    
+        res = sort_torrents(res)
         logger.debug(f"Request made to: {url}")
         logger.debug(f"{str(r.status_code)}: {r.reason}")
         logger.debug(f"Headers: {json.dumps(dict(r.request.headers))}")
