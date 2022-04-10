@@ -217,11 +217,36 @@ def download(id):
                 exit()
 
 
+################################################################################
+################################################################################
+###			search functon
+################################################################################
+################################################################################
+                
 def search(search_terms):
     print(f"Searching for \"{search_terms}\"...\n")
     try:
-        url = f"{shared.JACKETT_URL}/api/v2.0/indexers/{shared.JACKETT_INDEXER}/results?apikey={shared.APIKEY}&Query={search_terms}"
-        r = requests.get(url, verify=shared.VERIFY)
+        if shared.INDEXER_MANAGER == "jackett":
+            url = f"{shared.JACKETT_URL}/api/v2.0/indexers/{shared.JACKETT_INDEXER}/results?apikey={shared.JACKETT_APIKEY}&Query=" + urllib.parse.quote(search_terms)
+            print(url)
+            r = requests.get(url, verify=shared.VERIFY)
+            json_data = json.loads(r.content)["Results"]
+            res = []
+            for item in json_data:
+                item["title"] = item.pop("Title")
+                item["seeders"] = item.pop("Seeders")
+                item["leechers"] = item.pop("Peers")
+                item["size"] = item.pop("Size")
+                item["age"] = 0
+                item["downloadUrl"] = item.pop("Link")
+                if re.search("中文", item["title"]):
+                    item['cn'] = 1
+                else:
+                    item['cn'] = 0
+                item['protocol'] = 'torrent'
+                if re.search(search_terms, item["title"]):
+                    res.append(item)
+
         logger.debug(f"Request made to: {url}")
         logger.debug(f"{str(r.status_code)}: {r.reason}")
         logger.debug(f"Headers: {json.dumps(dict(r.request.headers))}")
