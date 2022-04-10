@@ -3,15 +3,19 @@ from clutch import Client as tClient
 from deluge_client import DelugeRPCClient
 from qbittorrent import Client as qClient
 from .helpers import fetch_torrent_url, convert_to_torrent
+import subprocess
 
 class torrent:
-    def __init__(self, id, description, media_type, seeders, leechers, download, size):
+    def __init__(self, id, description, media_type, seeders, leechers, download, size, age, protocol,cn):
         self.id = id
         self.media_type = media_type
         self.description = description
         self.seeders = seeders
         self.leechers = leechers
         self.download = download
+        self.age = -age ## smaller is better
+        self.protocol = protocol
+        self.cn = cn
         if(leechers > 0):
             self.ratio = self.seeders / self.leechers
         else:
@@ -27,7 +31,7 @@ def filter_out(title, exclusions):
 
 def deluge(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
     TOR_CLIENT = "Deluge"
-    print(f"Sending {torrent.description.decode('ascii')} to {TOR_CLIENT}")
+    print(f"Sending {torrent.description} to {TOR_CLIENT}")
     url = fetch_torrent_url(torrent)
     try:
         logger.debug("Connecting to torrent client...")
@@ -38,7 +42,7 @@ def deluge(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
         logger.debug(f"Connected to {TOR_CLIENT}") 
                                        
         # Add torrent
-        logger.debug(f"Adding {torrent.description.decode('ascii')} with url: {url}")
+        logger.debug(f"Adding {torrent.description} with url: {url}")
         client.call("download_torrent_from_url", url)
         print("Torrent sent!")
     except Exception as e:
@@ -48,7 +52,7 @@ def deluge(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
 
 def transmission(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
     TOR_CLIENT = "Transmission"
-    print(f"Sending {torrent.description.decode('ascii')} to {TOR_CLIENT}")
+    print(f"Sending {torrent.description} to {TOR_CLIENT}")
     url = fetch_torrent_url(torrent)
     try:
         logger.debug("Connecting to torrent client...")
@@ -62,7 +66,7 @@ def transmission(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
             logger.debug(f"Connected to {TOR_CLIENT}")    
                                        
         # Add torrent
-        logger.debug(f"Adding {torrent.description.decode('ascii')} with url: {url}")
+        logger.debug(f"Adding {torrent.description} with url: {url}")
         client.torrent.add({"filename": url})
         print("Torrent sent!")
     except Exception as e:
@@ -72,7 +76,7 @@ def transmission(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
 
 def qbittorrent(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
     TOR_CLIENT = "qBittorrent"
-    print(f"Sending {torrent.description.decode('ascii')} to {TOR_CLIENT}")
+    print(f"Sending {torrent.description} to {TOR_CLIENT}")
     url = fetch_torrent_url(torrent)
     try:
         logger.debug("Connecting to torrent client...")
@@ -83,7 +87,7 @@ def qbittorrent(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
   
                                        
         # Add torrent
-        logger.debug(f"Adding {torrent.description.decode('ascii')} with url: {url}")
+        logger.debug(f"Adding {torrent.description} with url: {url}")
         client.download_from_link(url)
         print("Torrent sent!")
     except Exception as e:
@@ -93,13 +97,13 @@ def qbittorrent(torrent, CLIENT_URL, TOR_CLIENT_USER, TOR_CLIENT_PW, logger):
 
 def local(torrent, download_dir, logger):
     TOR_CLIENT = "local download"
-    print(f"Sending {torrent.description.decode('ascii')} to {TOR_CLIENT}")
+    print(f"Sending {torrent.description} to {TOR_CLIENT}")
     url = fetch_torrent_url(torrent)
     try:
         if url.startswith("magnet:?"):
             
-            print(f"{torrent.description.decode('ascii')} appears to be a magnet link.")
-            logger.info(f"Adding {torrent.description.decode('ascii')} with url: {url}")
+            print(f"{torrent.description} appears to be a magnet link.")
+            logger.info(f"Adding {torrent.description} with url: {url}")
             logger.info(f"Using local download method...")   
             convert_to_torrent(url, download_dir)
         else:
