@@ -4,25 +4,34 @@ import requests
 import justlog
 import json
 import os
-from raincoat import shared
+from raincoat_prowlarr import shared
 from .helpers import greet, get_torrent_by_id, fetch_torrent_url
 from tabulate import tabulate
-from .torrent import torrent, filter_out, transmission, deluge, qbittorrent, local
+from .torrent import torrent, filter_out, transmission, deluge, qbittorrent, local, nzbget
 from justlog import justlog, settings
 from justlog.classes import Severity, Output, Format
 from .config import load_config
 from pathlib import Path
 from urllib3.exceptions import InsecureRequestWarning
+import urllib.parse
+import pprint
+import re
+import operator
+from shutil import which
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("search", help="What to search for.", nargs='?')
-parser.add_argument("-k", "--key", help="The Jackett API key.")
+parser.add_argument("--indexer_manager", help="prowlarr/jackett")
+parser.add_argument("--prowlarr_key", help="The Prowlarr API key.")
+parser.add_argument("--jackett_key", help="The Jackett API key.")
 parser.add_argument("--list", help="Path to a file of terms to search.", type=str)
 parser.add_argument("-l", "--length", help="Max results description length.", type=int)
 parser.add_argument("-L", "--limit", help="Max number of results.", type=int)
 parser.add_argument("-c", "--config", help="Specify a different config file path.")
-parser.add_argument("-s", "--sort", help="Change sorting criteria.", action="store", dest="sort", choices=['seeders', 'leechers', 'ratio', 'size', 'description'])
-parser.add_argument("-i", "--indexer", help="The Jackett indexer to use for your search.")
+parser.add_argument("-s", "--sort", help="Change sorting criteria. Any combination of 'cn','protocol', 'seeders', 'leechers', 'ratio', 'size', 'description'", dest="sort")
+parser.add_argument("--prowlarr_indexer", help="The Prowlarr indexer to use for your search.")
+parser.add_argument("--jackett_indexer", help="The Jackett indexer to use for your search.")
 parser.add_argument("-d", "--download", help="Download and send the top 'x' results (defaults to 1) to the client and exit.", nargs='?', const=1, type=int)
 parser.add_argument("-K", "--insecure", help="Enables to use self-signed certificates.", action="store_true")
 parser.add_argument("--local", help="Override torrent provider with local download.", action="store_true")
@@ -38,7 +47,7 @@ if args.config is not None:
 cfg = load_config(cfg_path)
 
 shared.TORRENTS = []
-shared.APIKEY = cfg['jackett_apikey']
+shared.JACKETT_APIKEY = cfg['jackett_apikey']
 shared.JACKETT_URL = cfg['jackett_url']
 shared.JACKETT_INDEXER = cfg['jackett_indexer']
 shared.DESC_LENGTH = cfg['description_length']
@@ -51,6 +60,18 @@ shared.TOR_CLIENT_USER = cfg['torrent_client_username']
 shared.TOR_CLIENT_PW = cfg['torrent_client_password']
 shared.DOWNLOAD_DIR = cfg['download_dir']
 shared.CURRENT_PAGE = 0
+
+
+shared.INDEXER_MANAGER = cfg['indexer_manager']
+shared.SORT = cfg['sort']
+shared.PROWLARR_APIKEY = cfg['prowlarr_apikey']
+shared.PROWLARR_URL = cfg['prowlarr_url']
+shared.PROWLARR_INDEXER = cfg['prowlarr_indexer']
+shared.NZBGET_URL = cfg['nzbget_url']
+shared.NZBGET_USER = cfg['nzbget_username']
+shared.NZBGET_PW = cfg['nzbget_password']
+shared.NZBGET_PORT = cfg['nzbget_port']
+
 
 
 # Setup logger
