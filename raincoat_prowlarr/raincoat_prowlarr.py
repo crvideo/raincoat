@@ -309,6 +309,12 @@ def search(search_terms):
     shared.CURRENT_PAGE = 1
     display_results(shared.CURRENT_PAGE)
 
+
+################################################################################
+################################################################################
+###			display result using table
+################################################################################
+################################################################################
 def display_results(page):
     display_table = []
     if page < 1:
@@ -321,10 +327,10 @@ def display_results(page):
             break
         tor.size = "{:.2f}".format(float(tor.size)/1000000)
         display_table.append([tor.id, tor.description, tor.media_type,
-                              f"{tor.size}GB", tor.seeders, tor.leechers, tor.ratio])
+                              f"{tor.size}GB", tor.seeders, tor.leechers, tor.ratio, tor.age,tor.protocol,tor.cn])
         count += 1
     print(tabulate(display_table, headers=[    
-          "ID", "Description", "Type", "Size", "Seeders", "Leechers", "Ratio"], floatfmt=".2f", tablefmt=shared.DISPLAY))
+          "ID", "Description", "Type", "Size", "Seeders", "Leechers", "Ratio","Age","Protocol","cn"], floatfmt=".2f", tablefmt=shared.DISPLAY))
     print(f"\nShowing page {shared.CURRENT_PAGE} - ({count * shared.CURRENT_PAGE} of {len(shared.TORRENTS)} results), limit is set to {shared.RESULTS_LIMIT}")    
     prompt_torrent()
 
