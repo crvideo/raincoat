@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import sys
 import json
-from raincoat import shared as shared
+from raincoat_prowlarr import shared as shared
 from justlog import justlog, settings
 from justlog.classes import Severity, Output, Format
 from pathlib import Path
@@ -51,7 +51,7 @@ def fetch_torrent_url(torrent):
         if shared.VERBOSE_MODE:
             logger.debug(f"Content: {r.content}")
 
-        if r.status_code == 302:
+        if r.status_code == 302 or r.status_code == 301:
             if r.headers['Location'] is not None:
                 return r.headers['Location']
             else:
