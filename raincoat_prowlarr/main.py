@@ -5,12 +5,12 @@ import justlog
 import json
 import os
 from raincoat_prowlarr import shared
-from .helpers import greet, get_torrent_by_id, fetch_torrent_url
+from raincoat_prowlarr.helpers import greet, get_torrent_by_id, fetch_torrent_url
 from tabulate import tabulate
-from .torrent import torrent, filter_out, transmission, deluge, qbittorrent, local, nzbget
+from raincoat_prowlarr.torrent import torrent, filter_out, transmission, deluge, qbittorrent, local, nzbget
 from justlog import justlog, settings
 from justlog.classes import Severity, Output, Format
-from .config import load_config
+from raincoat_prowlarr.config import load_config
 from pathlib import Path
 from urllib3.exceptions import InsecureRequestWarning
 import urllib.parse
@@ -36,6 +36,7 @@ parser.add_argument("-d", "--download", help="Download and send the top 'x' resu
 parser.add_argument("-K", "--insecure", help="Enables to use self-signed certificates.", action="store_true")
 parser.add_argument("--local", help="Override torrent provider with local download.", action="store_true")
 parser.add_argument("--verbose", help="Very verbose output to logs.", action="store_true")
+parser.add_argument("--print_table", help="print table.", action="store_true")
 args = parser.parse_args()
 
 shared.init()
@@ -60,6 +61,7 @@ shared.TOR_CLIENT_USER = cfg['torrent_client_username']
 shared.TOR_CLIENT_PW = cfg['torrent_client_password']
 shared.DOWNLOAD_DIR = cfg['download_dir']
 shared.CURRENT_PAGE = 0
+shared.PRINT_TABLE=True
 
 
 shared.INDEXER_MANAGER = cfg['indexer_manager']
@@ -125,6 +127,10 @@ def set_overrides():
 
     if args.prowlarr_indexer is not None:        
         shared.PROWLARR_INDEXER = args.prowlarr_indexer
+
+    print(args.print_table)
+    if args.print_table is not True:
+        share.PRINT_TABLE = args.print_table
 
 
     if args.list:        
@@ -306,8 +312,12 @@ def search(search_terms):
     #sort_torrents(shared.TORRENTS)
 
     # Display results
-    shared.CURRENT_PAGE = 1
-    display_results(shared.CURRENT_PAGE)
+    if shared.PRINT_TABLE is True:
+        shared.CURRENT_PAGE = 1
+        display_results(shared.CURRENT_PAGE)
+    else:
+        pprint(shared.TORRENTS)
+        
 
 
 ################################################################################
@@ -364,3 +374,7 @@ def main():
         exit()
     else:
         search(args.search)
+
+if __name__ == "__main__":
+    search(args.search)
+

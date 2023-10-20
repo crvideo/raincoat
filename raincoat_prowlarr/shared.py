@@ -34,6 +34,8 @@ def init():
     CURRENT_PAGE = 0
     global VERBOSE_MODE
     VERBOSE_MODE = False
+    global DISPLAY_TABLE
+    DISPLAY_TABLE = False
     global DOWNLOAD
     DOWNLOAD = 0
     global VERIFY
