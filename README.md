@@ -59,15 +59,15 @@ Upon installation, a config file is created in your home directory. Before you c
 
 ```json
 {
-    "indexer_manager": "prowlarr",
+  "indexer_manager": "prowlarr",
 	"jackett_apikey": "",
 	"jackett_url": "http://your_base_jackett_url:port",
 	"jackett_indexer": "all",
 	"prowlarr_apikey": "",
-	"prowlarr_url": "http://you_base_prowlarr_url:port",
-    "prowlarr_indexer": "",
+	"prowlarr_url": "http://your_base_prowlarr_url:port",
+  "prowlarr_indexer": "",
 	"description_length": 100,
-	"exclude": "words to exclude",
+	"exclude": "words to exclude from search",
 	"results_limit": 20,
 	"client_url": "http://your_torrent_client_api",
 	"display": "grid",
@@ -76,10 +76,10 @@ Upon installation, a config file is created in your home directory. Before you c
 	"torrent_client_password": "admin",
 	"download_dir": "/some/directory/",
 	"nzbget_url": "http://your_nzb_server_url",
-    "nzbget_username**: "***",
-    "nzbget_password**: "***",
-    "nzbget_port": 6789
-
+  "nzbget_username": "***",
+  "nzbget_password": "***",
+  "nzbget_port": 6789,
+  "sort": "cn,size"
 }
 ```
 - indexer_manager (string)
